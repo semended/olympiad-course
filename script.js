@@ -1,40 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  const updateOpenHeights = () => {
-    document.querySelectorAll('.program-card.is-open').forEach((card) => {
-      const content = card.querySelector('.program-content');
-      if (content) {
-        content.style.maxHeight = content.scrollHeight + "px";
-      }
-    });
-  };
-
-  const cards = document.querySelectorAll('.program-card');
+  const cards = document.querySelectorAll(".program-card");
 
   cards.forEach((card) => {
-    const header = card.querySelector('.program-header');
-    const content = card.querySelector('.program-content');
+    const header = card.querySelector(".program-header");
+    const content = card.querySelector(".program-content");
 
-    if (!header || !content) return;
-
-    // стартовое состояние
-    content.style.maxHeight = "0px";
-
-    header.addEventListener('click', () => {
-      const isOpen = card.classList.contains('is-open');
+    header.addEventListener("click", function () {
+      const isOpen = card.classList.contains("is-open");
 
       if (isOpen) {
+        card.classList.remove("is-open");
         content.style.maxHeight = null;
-        card.classList.remove('is-open');
       } else {
+        card.classList.add("is-open");
         content.style.maxHeight = content.scrollHeight + "px";
-        card.classList.add('is-open');
       }
-
-      requestAnimationFrame(updateOpenHeights);
     });
   });
-
-  window.addEventListener('resize', updateOpenHeights);
 
 });
