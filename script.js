@@ -1,71 +1,40 @@
-const programGrid = document.querySelector('#programGrid');
+document.addEventListener("DOMContentLoaded", function () {
 
-if (programGrid) {
-  const headers = Array.from(programGrid.querySelectorAll('.program-card__header'));
-
-  const closeCard = (header) => {
-    const card = header.closest('.program-card');
-    const content = header.nextElementSibling;
-
-    if (!card || !content) {
-      return;
-    }
-
-    header.setAttribute('aria-expanded', 'false');
-    card.classList.remove('is-open');
-    content.style.maxHeight = '0px';
-    content.style.opacity = '0';
+  const updateOpenHeights = () => {
+    document.querySelectorAll('.program-card.is-open').forEach((card) => {
+      const content = card.querySelector('.program-content');
+      if (content) {
+        content.style.maxHeight = content.scrollHeight + "px";
+      }
+    });
   };
 
-  const openCard = (header) => {
-    const card = header.closest('.program-card');
-    const content = header.nextElementSibling;
+  const cards = document.querySelectorAll('.program-card');
 
-    if (!card || !content) {
-      return;
-    }
+  cards.forEach((card) => {
+    const header = card.querySelector('.program-header');
+    const content = card.querySelector('.program-content');
 
-    header.setAttribute('aria-expanded', 'true');
-    card.classList.add('is-open');
-    content.style.maxHeight = `${content.scrollHeight}px`;
-    content.style.opacity = '1';
-  };
+    if (!header || !content) return;
 
-  headers.forEach((header) => {
-    const content = header.nextElementSibling;
-
-    if (content) {
-      content.hidden = false;
-      content.style.maxHeight = '0px';
-      content.style.opacity = '0';
-    }
+    // стартовое состояние
+    content.style.maxHeight = "0px";
 
     header.addEventListener('click', () => {
-      const isExpanded = header.getAttribute('aria-expanded') === 'true';
+      const isOpen = card.classList.contains('is-open');
 
-      headers.forEach((item) => {
-        if (item !== header) {
-          closeCard(item);
-        }
-      });
-
-      if (isExpanded) {
-        closeCard(header);
+      if (isOpen) {
+        content.style.maxHeight = null;
+        card.classList.remove('is-open');
       } else {
-        openCard(header);
+        content.style.maxHeight = content.scrollHeight + "px";
+        card.classList.add('is-open');
       }
+
+      requestAnimationFrame(updateOpenHeights);
     });
   });
 
-  window.addEventListener('resize', () => {
-    headers.forEach((header) => {
-      if (header.getAttribute('aria-expanded') === 'true') {
-        const content = header.nextElementSibling;
+  window.addEventListener('resize', updateOpenHeights);
 
-        if (content) {
-          content.style.maxHeight = `${content.scrollHeight}px`;
-        }
-      }
-    });
-  });
-}
+});
