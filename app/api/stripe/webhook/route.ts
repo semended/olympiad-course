@@ -5,12 +5,6 @@ import { upsertEnrollmentWithDurationDays } from "@/lib/data/enrollments";
 import { getCourseById } from "@/lib/data/lms";
 import { getStripe, getStripeWebhookSecret } from "@/lib/stripe";
 
-export const config = {
-  api: {
-    bodyParser: false
-  }
-};
-
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
 
