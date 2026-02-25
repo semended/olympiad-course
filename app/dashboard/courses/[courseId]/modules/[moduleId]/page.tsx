@@ -40,7 +40,7 @@ export default async function ModulePage({ params }: ModulePageProps) {
     redirect("/courses?message=Access%20expired%20or%20not%20purchased");
   }
 
-  const module = await getModuleById(params.courseId, params.moduleId);
+  const courseModule = await getModuleById(params.courseId, params.moduleId);
 
   if (!module) {
     notFound();
