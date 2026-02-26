@@ -42,7 +42,7 @@ export default async function ModulePage({ params }: ModulePageProps) {
 
   const courseModule = await getModuleById(params.courseId, params.moduleId);
 
-  if (!module) {
+  if (!courseModule) {
     notFound();
   }
 
@@ -52,12 +52,12 @@ export default async function ModulePage({ params }: ModulePageProps) {
     <AppShell>
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">
-          {module.title} ({module.course.title})
+          {courseModule.title} ({courseModule.course.title})
         </h2>
         <p className="text-sm text-slate-600">Список материалов модуля и текущий статус отправки.</p>
 
         <div className="space-y-3">
-          {module.materials.map((material) => {
+          {courseModule.materials.map((material) => {
             const materialState = progress.materialStates.find((item) => item.material.id === material.id);
             const statusLabel = formatStatus(
               materialState?.status ?? "NOT_SUBMITTED",

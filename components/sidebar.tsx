@@ -1,7 +1,9 @@
 import Link from "next/link";
+import type { Route } from "next";
+import type { ComponentType } from "react";
 import { BookOpen, LayoutDashboard, Library, Send, UserRound } from "lucide-react";
 
-const links = [
+const links: { href: Route; label: string; icon: ComponentType<{ className?: string }> }[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/courses", label: "My Courses", icon: BookOpen },
   { href: "/courses", label: "Catalog", icon: Library },

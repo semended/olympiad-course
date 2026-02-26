@@ -6,7 +6,7 @@ export function getStripe() {
   const secretKey = requireEnv("STRIPE_SECRET_KEY");
 
   return new Stripe(secretKey, {
-    apiVersion: "2024-06-20"
+    apiVersion: "2025-02-24.acacia"
   });
 }
 
