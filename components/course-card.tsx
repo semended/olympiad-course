@@ -7,6 +7,12 @@ type CourseCardProps = {
 };
 
 export function CourseCard({ title, description, href }: CourseCardProps) {
+type CourseCardProps = {
+  title: string;
+  description: string;
+};
+
+export function CourseCard({ title, description }: CourseCardProps) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg">
       <h3 className="text-xl font-semibold text-slate-900">{title}</h3>
@@ -17,6 +23,9 @@ export function CourseCard({ title, description, href }: CourseCardProps) {
       >
         Подробнее
       </Link>
+      <button className="mt-5 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-900 hover:text-slate-900">
+        Подробнее
+      </button>
     </article>
   );
 }

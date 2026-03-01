@@ -1,6 +1,21 @@
 import { CourseCard } from "@/components/course-card";
 import { COURSES } from "@/data/courses";
 
+const homeCourses = [
+  {
+    title: "Олмат 5–6",
+    description: "Вводный курс по олимпиадной математике для 5–6 классов: базовые идеи, логика и первые нестандартные задачи."
+  },
+  {
+    title: "Олмат 6–7",
+    description: "Продолжение подготовки: комбинаторные рассуждения, делимость, геометрические конструкции и стратегии решения."
+  },
+  {
+    title: "Олмат 7–8",
+    description: "Углублённый трек с олимпиадными техниками, разбором сложных задач и регулярной практикой на время."
+  }
+];
+
 export default function HomePage() {
   return (
     <section>
@@ -19,6 +34,8 @@ export default function HomePage() {
             description={course.shortDescription}
             href={`/courses/${course.slug}`}
           />
+        {homeCourses.map((course) => (
+          <CourseCard key={course.title} title={course.title} description={course.description} />
         ))}
       </div>
     </section>
