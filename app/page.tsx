@@ -1,28 +1,26 @@
-import Link from "next/link";
+import { CourseCard } from "@/components/course-card";
+import { COURSES } from "@/data/courses";
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-8">
-      <div className="w-full max-w-2xl rounded-2xl border bg-card p-8 shadow-sm">
-        <h1 className="text-3xl font-semibold">Olympiad Course Platform</h1>
-        <p className="mt-4 text-sm text-slate-600">
-          Базовый SaaS-каркас на Next.js 14 + Prisma + NextAuth с ролями USER / ADMIN.
+    <section>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Pandamath</h1>
+        <p className="mt-3 max-w-2xl text-slate-600">
+          Годовой курс олимпиады: выбирайте программу и занимайтесь в удобном темпе.
         </p>
-        <div className="mt-6 flex gap-3">
-          <Link
-            href="/auth/login"
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white"
-          >
-            Войти
-          </Link>
-          <Link
-            href="/auth/register"
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium"
-          >
-            Регистрация
-          </Link>
-        </div>
       </div>
-    </main>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        {COURSES.map((course) => (
+          <CourseCard
+            key={course.slug}
+            title={course.title}
+            description={course.shortDescription}
+            href={`/courses/${course.slug}`}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
