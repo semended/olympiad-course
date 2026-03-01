@@ -1,4 +1,5 @@
 import { CourseCard } from "@/components/course-card";
+import { COURSES } from "@/data/courses";
 
 const courses = [
   {
@@ -22,6 +23,13 @@ export default function CoursesPage() {
       <p className="mt-3 max-w-2xl text-slate-600">Три направления подготовки для разных возрастов.</p>
 
       <div className="mt-8 grid gap-6 md:grid-cols-3">
+        {COURSES.map((course) => (
+          <CourseCard
+            key={course.slug}
+            title={course.title}
+            description={course.shortDescription}
+            href={`/courses/${course.slug}`}
+          />
         {courses.map((course) => (
           <CourseCard key={course.title} title={course.title} description={course.description} />
         ))}

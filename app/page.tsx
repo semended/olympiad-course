@@ -1,4 +1,5 @@
 import { CourseCard } from "@/components/course-card";
+import { COURSES } from "@/data/courses";
 
 const homeCourses = [
   {
@@ -26,6 +27,13 @@ export default function HomePage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
+        {COURSES.map((course) => (
+          <CourseCard
+            key={course.slug}
+            title={course.title}
+            description={course.shortDescription}
+            href={`/courses/${course.slug}`}
+          />
         {homeCourses.map((course) => (
           <CourseCard key={course.title} title={course.title} description={course.description} />
         ))}
