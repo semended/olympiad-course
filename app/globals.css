@@ -6,6 +6,10 @@
   color-scheme: light;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
-  @apply bg-background text-foreground antialiased;
+  margin: 0;
 }

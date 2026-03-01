@@ -1,28 +1,35 @@
-import Link from "next/link";
+import { CourseCard } from "@/components/course-card";
+
+const homeCourses = [
+  {
+    title: "Олмат 5–6",
+    description: "Вводный курс по олимпиадной математике для 5–6 классов: базовые идеи, логика и первые нестандартные задачи."
+  },
+  {
+    title: "Олмат 6–7",
+    description: "Продолжение подготовки: комбинаторные рассуждения, делимость, геометрические конструкции и стратегии решения."
+  },
+  {
+    title: "Олмат 7–8",
+    description: "Углублённый трек с олимпиадными техниками, разбором сложных задач и регулярной практикой на время."
+  }
+];
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-8">
-      <div className="w-full max-w-2xl rounded-2xl border bg-card p-8 shadow-sm">
-        <h1 className="text-3xl font-semibold">Olympiad Course Platform</h1>
-        <p className="mt-4 text-sm text-slate-600">
-          Базовый SaaS-каркас на Next.js 14 + Prisma + NextAuth с ролями USER / ADMIN.
+    <section>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Pandamath</h1>
+        <p className="mt-3 max-w-2xl text-slate-600">
+          Годовой курс олимпиады: выбирайте программу и занимайтесь в удобном темпе.
         </p>
-        <div className="mt-6 flex gap-3">
-          <Link
-            href="/auth/login"
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white"
-          >
-            Войти
-          </Link>
-          <Link
-            href="/auth/register"
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium"
-          >
-            Регистрация
-          </Link>
-        </div>
       </div>
-    </main>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        {homeCourses.map((course) => (
+          <CourseCard key={course.title} title={course.title} description={course.description} />
+        ))}
+      </div>
+    </section>
   );
 }
