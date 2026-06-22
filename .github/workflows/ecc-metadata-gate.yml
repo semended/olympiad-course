@@ -1,0 +1,73 @@
+name: ECC metadata gate
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate-pr-body:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate ECC sections
+        env:
+          EVENT_PATH: ${{ github.event_path }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import sys
+
+          with open(os.environ["EVENT_PATH"], encoding="utf-8") as fh:
+              event = json.load(fh)
+
+          pr = event["pull_request"]
+          body = pr.get("body") or ""
+          title = pr.get("title") or ""
+
+          required_sections = ["Issue", "Execution", "Context", "Checks", "Review Gate"]
+          missing_sections = [
+              section
+              for section in required_sections
+              if not re.search(rf"^##?\s+{re.escape(section)}\b", body, re.IGNORECASE | re.MULTILINE)
+          ]
+
+          linked_issue = re.search(
+              r"(close[sd]?|fix(e[sd])?|resolve[sd]?)\s+#\d+|"
+              r"https://github\.com/[^/\s]+/[^/\s]+/issues/\d+|"
+              r"\bissue\s+#\d+",
+              body,
+              re.IGNORECASE,
+          )
+
+          reviewer_path = re.search(
+              r"^\s*-\s*Reviewer path:\s*(human reviewer|copilot|reviewer-agent)\b",
+              body,
+              re.IGNORECASE | re.MULTILINE,
+          )
+
+          failures = []
+          if missing_sections:
+              failures.append("Missing ECC PR sections: " + ", ".join(missing_sections))
+          if not linked_issue:
+              failures.append("PR body must link an issue, preferably with `Closes #<number>`.")
+          if not reviewer_path:
+              failures.append("Review Gate must set `Reviewer path:` to human reviewer, Copilot, or reviewer-agent.")
+
+          if failures:
+              print(f"ECC metadata gate failed for PR title: {title!r}")
+              for failure in failures:
+                  print(f"- {failure}")
+              sys.exit(1)
+
+          print("ECC metadata gate passed.")
+          PY

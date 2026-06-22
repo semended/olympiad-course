@@ -1,0 +1,72 @@
+name: ECC task
+description: Create a scoped task with Execution, Context, and Checks.
+title: "[ECC] "
+labels:
+  - process
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for any implementation task that should become its own branch and PR.
+
+        ECC means:
+        - Execution: what will change and how it will be shipped.
+        - Context: what a reviewer needs without reading the Codex thread.
+        - Checks: commands, artifacts, and reviewer gates that prove the work.
+  - type: input
+    id: objective
+    attributes:
+      label: Objective
+      description: One concrete outcome for this task.
+      placeholder: Improve Telegram card visuals for mobile posts.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Constraints, references, screenshots, prior PRs, assumptions, and out-of-scope items.
+      placeholder: |
+        References:
+        - Shkolkovo mobile card style
+        - Existing allmath brand assets
+
+        Out of scope:
+        - Live publishing
+    validations:
+      required: true
+  - type: textarea
+    id: execution
+    attributes:
+      label: Execution
+      description: Expected branch, files, implementation notes, and rollout steps.
+      placeholder: |
+        Branch: codex/<short-task-name>
+        Files:
+        - tools/...
+        - .github/...
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Reviewer-readable completion criteria.
+      placeholder: |
+        - [ ] PR contains only this task scope.
+        - [ ] Generated artifacts match the requested format.
+        - [ ] No secrets or live publishing are required.
+    validations:
+      required: true
+  - type: textarea
+    id: checks
+    attributes:
+      label: Checks
+      description: Commands, CI, screenshots, dry-runs, or manual review needed before merge.
+      placeholder: |
+        Required:
+        - python3 -m py_compile ...
+        - render/dry-run workflow
+        - no-context reviewer approval
+    validations:
+      required: true
