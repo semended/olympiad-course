@@ -1,0 +1,106 @@
+name: Build Telegram draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      spec:
+        description: JSON draft path
+        required: true
+        default: tools/social-post-generator/example-post.json
+  push:
+    branches:
+      - main
+    paths:
+      - tools/social-post-generator/queue/*.json
+
+jobs:
+  build-draft:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install render dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pillow
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils texlive-xetex fonts-liberation
+
+      - name: Collect post specs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            printf '%s\n' "${{ inputs.spec }}" > build/specs.txt
+          else
+            BEFORE="${{ github.event.before }}"
+            if [[ "$BEFORE" =~ ^0+$ ]]; then
+              git ls-files 'tools/social-post-generator/queue/*.json' > build/specs.txt
+            else
+              git diff --name-only --diff-filter=AM "$BEFORE" "$GITHUB_SHA" -- 'tools/social-post-generator/queue/*.json' > build/specs.txt
+            fi
+          fi
+
+      - name: Render drafts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/social-posts
+          if [ ! -s build/specs.txt ]; then
+            echo "No Telegram draft specs to render."
+            exit 0
+          fi
+
+          while IFS= read -r SPEC; do
+            [ -z "$SPEC" ] && continue
+            if [ ! -f "$SPEC" ]; then
+              echo "Spec does not exist: $SPEC" >&2
+              exit 1
+            fi
+
+            python3 tools/social-post-generator/render_social_post.py "$SPEC" --out build/social-posts
+            MANIFEST="$(
+              python3 - "$SPEC" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+spec = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+print(Path("build/social-posts") / spec["slug"] / "manifest.json")
+PY
+            )"
+            REPORT="$(
+              python3 - "$SPEC" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+spec = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+print(Path("build") / f"telegram-draft-{spec['slug']}.json")
+PY
+            )"
+
+            python3 tools/social-post-generator/publish_telegram_post.py "$MANIFEST" --json-report "$REPORT"
+          done < build/specs.txt
+
+      - name: Upload draft bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: telegram-draft-build
+          path: |
+            build/social-posts/
+            build/telegram-draft-*.json
+          if-no-files-found: ignore
